@@ -11,4 +11,4 @@ You can also download this module via [NuGet](http://nuget.org) with [Install-Pa
 
 InfobloxWapi.dll is not part of this Apache 2.0 licensed project but is only put here for convenience.
 
-See the [d-fens web site](http://d-fens.ch/2014/11/05/module-biz-dfch-ps-ipam-infoblox-api/) or check the [Wiki](https://github.com/dfch/biz.dfch.PS.Ipam.Infoblox.Api/wiki) for a detailed description on how to use the Cmdlets in this module.
+See the [d-fens web site](http://d-fens.ch/2014/12/05/module-biz-dfch-ps-ipam-infoblox-api/) or check the [Wiki](https://github.com/dfch/biz.dfch.PS.Ipam.Infoblox.Api/wiki) for a detailed description on how to use the Cmdlets in this module.
