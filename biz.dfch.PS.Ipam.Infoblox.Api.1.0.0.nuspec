@@ -29,10 +29,11 @@ See the [d-fens web site](http://d-fens.ch/2014/11/05/module-biz-dfch-ps-ipam-in
     <releaseNotes>20141205</releaseNotes>
     <copyright>(c) 2014 d-fens GmbH</copyright>
     <language>en-US</language>
-    <tags>PowerShell dfch</tags>
+    <tags>PowerShell dfch Infoblox</tags>
     <dependencies>
       <dependency id="biz.dfch.PS.System.Logging" version="1.0.3" />
       <dependency id="biz.dfch.PS.System.Utilities" version="1.0.2" />
+      <dependency id="System.Json" version="4.0.20126.16343" />
     </dependencies>
   </metadata>
   <files xmlns="">
