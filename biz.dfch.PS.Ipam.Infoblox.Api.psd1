@@ -62,6 +62,9 @@ RequiredAssemblies = @(
 	,
 	'System.Web.Extensions'
 	,
+	,
+	'System.Json.dll'
+	,
 	'InfobloxWapi.dll'
 )
 
@@ -109,6 +112,8 @@ FileList = @(
 	'InfobloxWapi.dll'
 	,
 	'Import-Module.ps1'
+	,
+	'System.Json.xml'
 )
 
 # Private data to pass to the module specified in RootModule/ModuleToProcess
