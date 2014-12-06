@@ -1,20 +1,20 @@
 function Invoke-RestCommand {
 <#
-
 .SYNOPSIS
-
 Invokes an arbitrary Infoblox REST API.
 
 
 .DESCRIPTION
-
 This Cmdlet lets you execute arbitrary API calls towards an Infoblox API rest 
 endpoint. For a list of possible API calls consult the Infoblox WAPI 
 documentation.
 
 
-.OUTPUTS
+.INPUTS
+See PARAMETER section for a description of input parameters.
 
+
+.OUTPUTS
 default | json | json-pretty | xml | xml-pretty
 
 
@@ -46,67 +46,83 @@ See module manifest for dependencies and further requirements.
 	,
     ConfirmImpact = "Medium"
 	,
+	DefaultParameterSetName = 'c'
+	,
 	HelpURI = 'http://dfch.biz/biz/dfch/PS/Ipam/Infoblox/Api/Invoke-RestCommand/'
 )]
 [OutputType([String])]
 Param 
 (
+	# Specifies the HTTP method to invoke
 	[ValidateSet("GET", "POST", "PUT", "DELETE", "HEAD", "MERGE", 'TRACE', 'OPTIONS', 'PATCH')]
 	[Parameter(Mandatory = $false)]
 	[alias("m")]
 	[string] $Method = 'GET'
 	,
+	# Specifies the URL to invoke. This can be a relative or absolute URL
 	[Parameter(Mandatory = $true, Position = 0)]
 	[ValidateNotNullOrEmpty()]
 	[alias("Url")]
 	[Uri] $Uri
 	,
+	# Specifies a dictionary of header to attach to the request
 	[Parameter(Mandatory = $false)]
 	[alias("h")]
 	[ValidateNotNullOrEmpty()]
 	[hashtable] $Headers = @{}
 	,
+	# [Optional] Specifies the body to attach to the request
 	[Parameter(Mandatory = $false)]
 	[alias("b")]
 	[string] $Body = ''
 	,
+	# Specifies a dictionary of query pramaters to attach to the request
 	[Parameter(Mandatory = $false)]
 	[alias("q")]
 	[ValidateNotNullOrEmpty()]
 	[hashtable] $QueryParameters = @{}
 	,
+	# Specifies the server name to invoke.
 	[Parameter(Mandatory = $false)]
 	[AllowEmptyString()]
 	[string] $UriServer = (Get-Variable -Name $MyInvocation.MyCommand.Module.PrivateData.MODULEVAR -ValueOnly).UriServer
 	,
+	# Specifes the base url to invoke
 	[Parameter(Mandatory = $false)]
 	[AllowEmptyString()]
 	[string] $UriBase = (Get-Variable -Name $MyInvocation.MyCommand.Module.PrivateData.MODULEVAR -ValueOnly).UriBase
 	,
+	# Specifies the return format of the Cmdlet
 	[ValidateSet("xml", "xml-pretty", "json", "json-pretty")]
 	[Parameter(Mandatory = $false)]
 	[alias("a")]
 	[alias("accept")]
 	[string] $ReturnType = (Get-Variable -Name $MyInvocation.MyCommand.Module.PrivateData.MODULEVAR -ValueOnly).ReturnType
 	,
+	# Specifies the Content-Type header of the request
 	[ValidateSet('application/xml', 'application/json', 'text/xml', 'application/x-www-urlencoded')]
 	[Parameter(Mandatory = $false)]
 	[alias("c")]
 	[alias("content")]
 	[string] $ContentType = (Get-Variable -Name $MyInvocation.MyCommand.Module.PrivateData.MODULEVAR -ValueOnly).ContentType
 	,
+	# Specifies a maximum wait time in seconds of the request
 	[Parameter(Mandatory = $false)]
-	[string] $TimeoutSec = (Get-Variable -Name $MyInvocation.MyCommand.Module.PrivateData.MODULEVAR -ValueOnly).TimeoutSec
+	[alias("t")]
+	[int] $TimeoutSec = (Get-Variable -Name $MyInvocation.MyCommand.Module.PrivateData.MODULEVAR -ValueOnly).TimeoutSec
 	,
+	# Specifies credentials for authentication of the request
 	[Parameter(Mandatory = $false, ParameterSetName = 'c')]
 	[alias("cred")]
 	[PSCredential] $Credential = (Get-Variable -Name $MyInvocation.MyCommand.Module.PrivateData.MODULEVAR -ValueOnly).Credential
 	,
+	# Specifies the username for authentication of the request
 	[Parameter(Mandatory = $true, ParameterSetName = 'u')]
 	[alias("u")]
 	[alias("user")]
 	[string] $Username
 	,
+	# Specifies the password for authentication of the request
 	[Parameter(Mandatory = $true, ParameterSetName = 'u')]
 	[alias("p")]
 	[alias("pass")]
@@ -281,8 +297,8 @@ if($MyInvocation.ScriptName) { Export-ModuleMember -Function Invoke-RestCommand;
 # SIG # Begin signature block
 # MIIW3AYJKoZIhvcNAQcCoIIWzTCCFskCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUZxr6fNmI7V+G6/yonADnyNgB
-# amSgghGYMIIEFDCCAvygAwIBAgILBAAAAAABL07hUtcwDQYJKoZIhvcNAQEFBQAw
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUctvTj3SbGeieA4iMrIOmMTkf
+# Ms+gghGYMIIEFDCCAvygAwIBAgILBAAAAAABL07hUtcwDQYJKoZIhvcNAQEFBQAw
 # VzELMAkGA1UEBhMCQkUxGTAXBgNVBAoTEEdsb2JhbFNpZ24gbnYtc2ExEDAOBgNV
 # BAsTB1Jvb3QgQ0ExGzAZBgNVBAMTEkdsb2JhbFNpZ24gUm9vdCBDQTAeFw0xMTA0
 # MTMxMDAwMDBaFw0yODAxMjgxMjAwMDBaMFIxCzAJBgNVBAYTAkJFMRkwFwYDVQQK
@@ -380,25 +396,25 @@ if($MyInvocation.ScriptName) { Export-ModuleMember -Function Invoke-RestCommand;
 # bnYtc2ExJzAlBgNVBAMTHkdsb2JhbFNpZ24gQ29kZVNpZ25pbmcgQ0EgLSBHMgIS
 # ESFgd9/aXcgt4FtCBtsrp6UyMAkGBSsOAwIaBQCgeDAYBgorBgEEAYI3AgEMMQow
 # CKACgAChAoAAMBkGCSqGSIb3DQEJAzEMBgorBgEEAYI3AgEEMBwGCisGAQQBgjcC
-# AQsxDjAMBgorBgEEAYI3AgEVMCMGCSqGSIb3DQEJBDEWBBTKclzC+u2EzM5PgHWQ
-# G6sigqyQIzANBgkqhkiG9w0BAQEFAASCAQC0DWpECDDduyD/cd9bm+Pi6xh8+BN1
-# stx95d4GwMCBi4de3hAoc9vTVyQP2JM5s1t/ifeId93DvSIJ21ptrY7x3KzqhqvQ
-# GMty9z2XanW+BKLGBWI+lIX4/sZT14nqFpdgjSW23KBH2ZAH676Ysv6EwJuIcPVp
-# 31uqgmavyTG/25Z5bdhmtrq2VIljDjJy/bVQ8SRFg2HA5Sg8kbaTKXxb0otrXtQX
-# mb6tYBeNH4TGkDj5+Ljcjw4CEZAojvC5TYmWgpLYUP7ZIS28Xadn1smUQwJ+AG+T
-# 8KRpsdNEq1BvfxhfIdU2kIEaDzb6GtXv05Ec97RKiEeZwf/2IVaaj9Y9oYICojCC
+# AQsxDjAMBgorBgEEAYI3AgEVMCMGCSqGSIb3DQEJBDEWBBT3KH4JxrCUP1ska54q
+# IFoiiHH/bDANBgkqhkiG9w0BAQEFAASCAQAk0nkmFk/fwr0geiUGDWPzrqa+9XhZ
+# bnefKmuSWp1Ie4wZksm8mG3vuycd506e9i9GtVEJPlnRuoVvPDoedw5vxEWWjFsp
+# yjtec95ZoW7tuF4ZRZZVao3m8gHSZ7eM+/x2yC6AHIjfKMnwdHQFWfSQga29w9fC
+# iV4WYao3IHr29yzfW8A15uUZDDOdpMnNEishIibgD0lpe0AX0HLDmFKiBzmtwtA7
+# 0OT+Ya/kh9R2PALIcKsyShWgL+mGmbzs94RVrMQLsO0GIwoUBU2q4qFv5KobOPbm
+# qfImO05sxsEwrbFttOuadC5EtmS0FYwc4KclBMMM/RBwlJTwHBg4ELVgoYICojCC
 # Ap4GCSqGSIb3DQEJBjGCAo8wggKLAgEBMGgwUjELMAkGA1UEBhMCQkUxGTAXBgNV
 # BAoTEEdsb2JhbFNpZ24gbnYtc2ExKDAmBgNVBAMTH0dsb2JhbFNpZ24gVGltZXN0
 # YW1waW5nIENBIC0gRzICEhEhQFwfDtJYiCvlTYaGuhHqRTAJBgUrDgMCGgUAoIH9
 # MBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTE0MTIw
-# NTEyMzcxOFowIwYJKoZIhvcNAQkEMRYEFHcBFSswFSDVaiRG0BI0FbcT8PeNMIGd
+# NjA3NTgyMFowIwYJKoZIhvcNAQkEMRYEFFysEHMrR4dkQpk1WKhggrNEz5acMIGd
 # BgsqhkiG9w0BCRACDDGBjTCBijCBhzCBhAQUjOafUBLh0aj7OV4uMeK0K947NDsw
 # bDBWpFQwUjELMAkGA1UEBhMCQkUxGTAXBgNVBAoTEEdsb2JhbFNpZ24gbnYtc2Ex
 # KDAmBgNVBAMTH0dsb2JhbFNpZ24gVGltZXN0YW1waW5nIENBIC0gRzICEhEhQFwf
-# DtJYiCvlTYaGuhHqRTANBgkqhkiG9w0BAQEFAASCAQCbUgambYPUIRPCU7OaDhpk
-# tHMvXAzGpLTZZYtzW1MVQtDRBFwGWaiWH4DFu1K5NFZeehV+/BLm4miLDeMtUufV
-# wgkTi5pbYndAjHQVx9yg9exE6AY7wM2CMbjewj+h2xTpih/CntCFk+1aq3pfTzJS
-# VRqI7pkZrLRyulzJFvycjKFY6mEDXf1zRmA94/0hdWLGzRT0poMi7tVrBONp2WF+
-# LzHTZw3h6PXQD4Tiiq9S5Kjm7c5BNLGuUn26rXPB+Q78hOeLaw7fuP3QL3y3IWbK
-# S63p1HX/jCl0GrdJ3+rJjLMiAEcQlzOEz8Sx8R2oUhHahbMT53no1i/Xohd+4qL6
+# DtJYiCvlTYaGuhHqRTANBgkqhkiG9w0BAQEFAASCAQBHKkp5n+vFeB+ShXhAQbYn
+# 2zJVrx0D1x5GnM4XnnPI98fAuM6e1oJWNAb+kIaQcTwrVbGI9V0uTdD/kcMdl0wv
+# PAf5kg58bK8aBcmyuHdTI6qzBGLQZrCt+PhqIrj1FqrS8rcHAXFuSUqrZELaO0NW
+# wLtOtbdZXQhOzwdFX/EIXGIT2UR1CPtlAWWKnusqQ0iqJ1RNXfPaWeBuR5G3Oyxl
+# k1bvDUQWEpPpekBtEIaj9HxwTPOz0rDTlirOAl6b3UGHte7HNAMUIQANlxUB4yC2
+# n94b5mIMvm0zjufYZrW3fdZC+Eyr7NuWwQegcDWqA4WdLD56Ur2CiOuIEppDn3/d
 # SIG # End signature block

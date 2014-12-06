@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>biz.dfch.PS.Ipam.Infoblox.Api</id>
+    <version>1.0.1</version>
+    <title>biz.dfch.PS.Ipam.Infoblox.Api</title>
+    <authors>d-fens GmbH</authors>
+    <owners>Ronald Rink</owners>
+    <licenseUrl>https://github.com/dfch/biz.dfch.PS.Ipam.Infoblox.Api/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/dfch/biz.dfch.PS.Ipam.Infoblox.Api</projectUrl>
+    <iconUrl>https://raw.githubusercontent.com/dfch/fragments/master/logo-32x32.png</iconUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <description>biz.dfch.PS.Ipam.Infoblox.Api
+=============================
+
+Module: biz.dfch.PS.Ipam.Infoblox.Api
+
+d-fens GmbH, General-Guisan-Strasse 6, CH-6300 Zug, Switzerland
+
+This Microsoft PowerShell module contains Cmdlets to perform various base actions and utility/convenience functions against the Infoblox REST API (WAPI).
+
+You can also download this module via [NuGet](http://nuget.org) with [Install-Package biz.dfch.PS.Cumulus.Utilities](https://www.nuget.org/packages/biz.dfch.PS.Ipam.Infoblox.Api/)
+
+InfobloxWapi.dll is not part of this Apache 2.0 licensed project but is only put here for convenience.
+
+See the [d-fens web site](http://d-fens.ch/2014/12/05/module-biz-dfch-ps-ipam-infoblox-api/) or check the [Wiki](https://github.com/dfch/biz.dfch.PS.Ipam.Infoblox.Api/wiki) for a detailed description on how to use the Cmdlets in this module.
+</description>
+    <summary>This Microsoft PowerShell module contains Cmdlets to perform various actions and utilties/convenience functions against the Infoblox REST API.</summary>
+    <releaseNotes>20141206</releaseNotes>
+    <copyright>(c) 2014 d-fens GmbH</copyright>
+    <language>en-US</language>
+    <tags>PowerShell dfch Infoblox</tags>
+    <dependencies>
+      <dependency id="biz.dfch.PS.System.Logging" version="1.0.3" />
+      <dependency id="biz.dfch.PS.System.Utilities" version="1.0.2" />
+      <dependency id="System.Json" version="4.0.20126.16343" />
+    </dependencies>
+  </metadata>
+  <files xmlns="">
+    <file src="biz.dfch.PS.Ipam.Infoblox.Api.psm1" target="biz.dfch.PS.Ipam.Infoblox.Api.psm1" />
+    <file src="biz.dfch.PS.Ipam.Infoblox.Api.psd1" target="biz.dfch.PS.Ipam.Infoblox.Api.psd1" />
+    <file src="biz.dfch.PS.Ipam.Infoblox.Api.xml" target="biz.dfch.PS.Ipam.Infoblox.Api.xml" />
+    <file src="LICENSE" target="LICENSE" />
+    <file src="NOTICE" target="NOTICE" />
+    <file src="README.md" target="README.md" />
+    <file src="InfobloxWapi.dll" target="InfobloxWapi.dll" />
+    <file src="Import-Module.ps1" target="Import-Module.ps1" />
+    <file src="System.Json.xml" target="System.Json.xml" />
+    <file src="Invoke-RestCommand.ps1" target="Invoke-RestCommand.ps1" />
+    <file src="Enter-Server.ps1" target="Enter-Server.ps1" />
+  </files>
+</package>
