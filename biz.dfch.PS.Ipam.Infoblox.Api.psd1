@@ -12,7 +12,7 @@
 RootModule = 'biz.dfch.PS.Ipam.Infoblox.Api.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.0.1.20141206'
+ModuleVersion = '1.1.0.20150416'
 
 # ID used to uniquely identify this module
 GUID = '26be8c51-7b9a-48b1-a602-7462d498eb03'
@@ -24,10 +24,10 @@ Author = 'Ronald Rink'
 CompanyName = 'd-fens GmbH'
 
 # Copyright statement for this module
-Copyright = '(c) 2014 d-fens GmbH. Distributed under Apache 2.0 license.'
+Copyright = '(c) 2014-2015 d-fens GmbH. Distributed under Apache 2.0 license.'
 
 # Description of the functionality provided by this module
-Description = 'A helper module for Infoblox REST API access'
+Description = 'Helper module for the Infoblox WAPI (REST API)'
 
 # Minimum version of the Windows PowerShell engine required by this module
 PowerShellVersion = '3.0'
@@ -61,9 +61,6 @@ RequiredAssemblies = @(
 	'System.Web'
 	,
 	'System.Web.Extensions'
-	,
-	,
-	'System.Json.dll'
 	,
 	'InfobloxWapi.dll'
 )
@@ -111,11 +108,7 @@ FileList = @(
 	,
 	'README.md'
 	,
-	'InfobloxWapi.dll'
-	,
 	'Import-Module.ps1'
-	,
-	'System.Json.xml'
 )
 
 # Private data to pass to the module specified in RootModule/ModuleToProcess
@@ -132,27 +125,30 @@ DefaultCommandPrefix = 'Infoblox'
 
 }
 
-# 
-# Copyright 2014-2015 Ronald Rink, d-fens GmbH
-# 
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-# 
-# http://www.apache.org/licenses/LICENSE-2.0
-# 
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-# 
+<##
+ #
+ #
+ # Copyright 2014, 2015 Ronald Rink, d-fens GmbH
+ #
+ # Licensed under the Apache License, Version 2.0 (the "License");
+ # you may not use this file except in compliance with the License.
+ # You may obtain a copy of the License at
+ #
+ # http://www.apache.org/licenses/LICENSE-2.0
+ #
+ # Unless required by applicable law or agreed to in writing, software
+ # distributed under the License is distributed on an "AS IS" BASIS,
+ # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ # See the License for the specific language governing permissions and
+ # limitations under the License.
+ #
+ #>
 
 # SIG # Begin signature block
 # MIIW3AYJKoZIhvcNAQcCoIIWzTCCFskCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUYvCLXDKQrEMfk2S6Ry1xJ+ca
-# xHWgghGYMIIEFDCCAvygAwIBAgILBAAAAAABL07hUtcwDQYJKoZIhvcNAQEFBQAw
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUYkKJaK+Q4wOi7VLXtp6Ulo4L
+# fN6gghGYMIIEFDCCAvygAwIBAgILBAAAAAABL07hUtcwDQYJKoZIhvcNAQEFBQAw
 # VzELMAkGA1UEBhMCQkUxGTAXBgNVBAoTEEdsb2JhbFNpZ24gbnYtc2ExEDAOBgNV
 # BAsTB1Jvb3QgQ0ExGzAZBgNVBAMTEkdsb2JhbFNpZ24gUm9vdCBDQTAeFw0xMTA0
 # MTMxMDAwMDBaFw0yODAxMjgxMjAwMDBaMFIxCzAJBgNVBAYTAkJFMRkwFwYDVQQK
@@ -196,12 +192,12 @@ DefaultCommandPrefix = 'Infoblox'
 # cME9fte9LyrD4vWPDJDca6XIvmheXW34eNK+SZUeFXgIkfs0yL6Erbzgxt0Y2/PK
 # 8HvCFDwYuAO6lT4hHj9gaXp/agOejUr58CgsMIRe7CZyQrFty2TDEozWhEtnQXyx
 # Axd4CeOtqLaWLaR+gANPiPfBa1pGFc0sGYvYcJzlLUmIYHKopBlScENe2tZGA7Bo
-# DiTvSvYLJSTvJDCCBJ8wggOHoAMCAQICEhEhQFwfDtJYiCvlTYaGuhHqRTANBgkq
+# DiTvSvYLJSTvJDCCBJ8wggOHoAMCAQICEhEhBqCB0z/YeuWCTMFrUglOAzANBgkq
 # hkiG9w0BAQUFADBSMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBu
 # di1zYTEoMCYGA1UEAxMfR2xvYmFsU2lnbiBUaW1lc3RhbXBpbmcgQ0EgLSBHMjAe
-# Fw0xMzA4MjMwMDAwMDBaFw0yNDA5MjMwMDAwMDBaMGAxCzAJBgNVBAYTAlNHMR8w
+# Fw0xNTAyMDMwMDAwMDBaFw0yNjAzMDMwMDAwMDBaMGAxCzAJBgNVBAYTAlNHMR8w
 # HQYDVQQKExZHTU8gR2xvYmFsU2lnbiBQdGUgTHRkMTAwLgYDVQQDEydHbG9iYWxT
-# aWduIFRTQSBmb3IgTVMgQXV0aGVudGljb2RlIC0gRzEwggEiMA0GCSqGSIb3DQEB
+# aWduIFRTQSBmb3IgTVMgQXV0aGVudGljb2RlIC0gRzIwggEiMA0GCSqGSIb3DQEB
 # AQUAA4IBDwAwggEKAoIBAQCwF66i07YEMFYeWA+x7VWk1lTL2PZzOuxdXqsl/Tal
 # +oTDYUDFRrVZUjtCoi5fE2IQqVvmc9aSJbF9I+MGs4c6DkPw1wCJU6IRMVIobl1A
 # cjzyCXenSZKX1GyQoHan/bjcs53yB2AsT1iYAGvTFVTg+t3/gCxfGKaY/9Sr7KFF
@@ -215,12 +211,12 @@ DefaultCommandPrefix = 'Infoblox'
 # Y3JsMFQGCCsGAQUFBwEBBEgwRjBEBggrBgEFBQcwAoY4aHR0cDovL3NlY3VyZS5n
 # bG9iYWxzaWduLmNvbS9jYWNlcnQvZ3N0aW1lc3RhbXBpbmdnMi5jcnQwHQYDVR0O
 # BBYEFNSihEo4Whh/uk8wUL2d1XqH1gn3MB8GA1UdIwQYMBaAFEbYPv/c477/g+b0
-# hZuw3WrWFKnBMA0GCSqGSIb3DQEBBQUAA4IBAQACMRQuWFdkQYXorxJ1PIgcw17s
-# LOmhPPW6qlMdudEpY9xDZ4bUOdrexsn/vkWF9KTXwVHqGO5AWF7me8yiQSkTOMjq
-# IRaczpCmLvumytmU30Ad+QIYK772XU+f/5pI28UFCcqAzqD53EvDI+YDj7S0r1tx
-# KWGRGBprevL9DdHNfV6Y67pwXuX06kPeNT3FFIGK2z4QXrty+qGgk6sDHMFlPJET
-# iwRdK8S5FhvMVcUM6KvnQ8mygyilUxNHqzlkuRzqNDCxdgCVIfHUPaj9oAAy126Y
-# PKacOwuDvsu4uyomjFm4ua6vJqziNKLcIQ2BCzgT90Wj49vErKFtG7flYVzXMIIE
+# hZuw3WrWFKnBMA0GCSqGSIb3DQEBBQUAA4IBAQCAMtwHjRygnJ08Kug9IYtZoU1+
+# zETOA75+qrzE5ntzu0vxiNqQTnU3KDhjudcrD1SpVs53OZcwc82b2dkFRRyNpLgD
+# XU/ZHC6Y4OmI5uzXBX5WKnv3FlujrY+XJRKEG7JcY0oK0u8QVEeChDVpKJwM5B8U
+# FiT6ddx0cm5OyuNqQ6/PfTZI0b3pBpEsL6bIcf3PvdidIZj8r9veIoyvp/N3753c
+# o3BLRBrweIUe8qWMObXciBw37a0U9QcLJr2+bQJesbiwWGyFOg32/1onDMXeU+dU
+# PFZMyU5MMPbyXPsajMKCvq1ZkfYbTVV7z1sB3P16028jXDJHmwHzwVEURoqbMIIE
 # rTCCA5WgAwIBAgISESFgd9/aXcgt4FtCBtsrp6UyMA0GCSqGSIb3DQEBBQUAMFEx
 # CzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMScwJQYDVQQD
 # Ex5HbG9iYWxTaWduIENvZGVTaWduaW5nIENBIC0gRzIwHhcNMTIwNjA4MDcyNDEx
@@ -250,25 +246,25 @@ DefaultCommandPrefix = 'Infoblox'
 # bnYtc2ExJzAlBgNVBAMTHkdsb2JhbFNpZ24gQ29kZVNpZ25pbmcgQ0EgLSBHMgIS
 # ESFgd9/aXcgt4FtCBtsrp6UyMAkGBSsOAwIaBQCgeDAYBgorBgEEAYI3AgEMMQow
 # CKACgAChAoAAMBkGCSqGSIb3DQEJAzEMBgorBgEEAYI3AgEEMBwGCisGAQQBgjcC
-# AQsxDjAMBgorBgEEAYI3AgEVMCMGCSqGSIb3DQEJBDEWBBT7qx3xBxBQV8kiVX5H
-# b4eZE/f2JDANBgkqhkiG9w0BAQEFAASCAQAo0ps6B5wabnSSMI8tIEUky1UsZ/lP
-# GdvHABd7jcKDqzR4X/R8Xl6DtJF8OCnSPmOZPTnT42QrX2KRFubSvXqSLloSuLJJ
-# rh4CRZPrOaEQ6qIePXLwrJeIao8jcwQ6OTYr+nIlDE3CCWu3dST5J9erEzNz14MD
-# 3+CIrwU7RRfHHD90P6wMTSInwylgmW/01cLKYXcvHovpqAbgBMpDUzO0rtNgCH5O
-# X4ZLjXpRpJkycE+GAV5WeO0kd+TtcxiyHDMZXeTNDnECoYWrxF7Yp5/nlegbRKH8
-# L9xjQhmcitZCgX+pqsThEy2qcEi8duhHJI2KT3r3oEm0MlAGY7wdQ2nwoYICojCC
+# AQsxDjAMBgorBgEEAYI3AgEVMCMGCSqGSIb3DQEJBDEWBBQFcAD+ITQgoLf6EOwp
+# 4uesexltiTANBgkqhkiG9w0BAQEFAASCAQCNAzAFn+tWkLAXjeFC1KwcZoBNchNG
+# jrLPd4av1OxiK5eh4QlMVRxB8hqYpVyCZyuAScLvZOIZH37On0rkfz4GVloSbjCI
+# XZk2dJRFKNLXw4NFeFJHDpdG6zWVyRDJoq/uZQokZZd5NzWGjJydyGvVFCTBFQyH
+# e2jO+AyJLoRI8V9EWVZtOQuY4KaGYOe7Mqbcd9iGYbs2rX2Ve+f/rwrBUpPhB7vP
+# rVUp9+uAYpoT9ThWMyUbt2Id7cqZN16wE4WrbJ8pclfUnlLAsyz8THaDzQu0smgA
+# XOIjU9rDyJb6Xk5eYhjGvgRDaSmOk7TjQ9CECYBse3uBZPls33D5thK9oYICojCC
 # Ap4GCSqGSIb3DQEJBjGCAo8wggKLAgEBMGgwUjELMAkGA1UEBhMCQkUxGTAXBgNV
 # BAoTEEdsb2JhbFNpZ24gbnYtc2ExKDAmBgNVBAMTH0dsb2JhbFNpZ24gVGltZXN0
-# YW1waW5nIENBIC0gRzICEhEhQFwfDtJYiCvlTYaGuhHqRTAJBgUrDgMCGgUAoIH9
-# MBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTE0MTIw
-# NjExMjU1N1owIwYJKoZIhvcNAQkEMRYEFDS+fO6T2XnUs/rs3PtNNr6njyYoMIGd
-# BgsqhkiG9w0BCRACDDGBjTCBijCBhzCBhAQUjOafUBLh0aj7OV4uMeK0K947NDsw
+# YW1waW5nIENBIC0gRzICEhEhBqCB0z/YeuWCTMFrUglOAzAJBgUrDgMCGgUAoIH9
+# MBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTE1MDQx
+# NjExMjIxMFowIwYJKoZIhvcNAQkEMRYEFIWB6yUSKGFqd7fM6VRqeReSl/+ZMIGd
+# BgsqhkiG9w0BCRACDDGBjTCBijCBhzCBhAQUs2MItNTN7U/PvWa5Vfrjv7EsKeYw
 # bDBWpFQwUjELMAkGA1UEBhMCQkUxGTAXBgNVBAoTEEdsb2JhbFNpZ24gbnYtc2Ex
-# KDAmBgNVBAMTH0dsb2JhbFNpZ24gVGltZXN0YW1waW5nIENBIC0gRzICEhEhQFwf
-# DtJYiCvlTYaGuhHqRTANBgkqhkiG9w0BAQEFAASCAQCSR9HMPdIh1jOWFpHxp3cY
-# m4xOygjikhVd78aYXusqWy5TFi2ZQnqahT76F/5oiFxrenR9RyquNglc/ZESLVrw
-# zUoi6MIKWf3UOX8edyjXNriA6v0SMB0W0JSo/wlo1fxBpkNJxyVe/5Pq4bLXMgBk
-# yaAkITG44yQlgqWk+T0NwXLlV5RNxbOgqdfMUoJ29py+7U6F3GvO8g+7oVUUxyc4
-# NvdBoA8iwopDJG1GGl3mBPExIlMGHzRvu95WS/wutd90DrJocBIlOK3yOtX8lM4B
-# 0b5VSIQFj4yz8OgdOSUzc4ZXNd7JCz6FZYFm39Qyj0GBCeJCYOBGINGdeRIqqydu
+# KDAmBgNVBAMTH0dsb2JhbFNpZ24gVGltZXN0YW1waW5nIENBIC0gRzICEhEhBqCB
+# 0z/YeuWCTMFrUglOAzANBgkqhkiG9w0BAQEFAASCAQAEYgdP07bESmeoP1uw0Dj+
+# h8C8A6YXIQ5rBqg5sZz5R+kwi/9nt4oT1Od5azQr3dW5UPtm2ezPHe7rnkci90nd
+# QYvW0V0FpxM6hvQWwrr+u68vBrdMBaDIhmc+pszrJLHxxvHG20fv2HhuQSUntgh9
+# 5AmNGfXUr2duolRp9xha36URjcWNjDOPkWKkJeTQcSwuypbKvj/AfkIaGoQKa6UX
+# gt577sHQYFGbTliAUPgtuYg7MOC+hy1DcXRS8JdZGs9XUbeJbOmKPXpiC6eN5ogm
+# 4ercf93RPaZQg92RfjIyuZy2fuy1Wk9jBsgnldzM6y6cSCQ6gqRrSEJhxkGBXnVr
 # SIG # End signature block
