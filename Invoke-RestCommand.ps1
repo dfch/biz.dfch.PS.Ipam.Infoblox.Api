@@ -294,7 +294,7 @@ END
 
 if($MyInvocation.ScriptName) { Export-ModuleMember -Function Invoke-RestCommand; } 
 
-/##
+<##
  #
  #
  # Copyright 2014, 2015 Ronald Rink, d-fens GmbH
@@ -311,4 +311,4 @@ if($MyInvocation.ScriptName) { Export-ModuleMember -Function Invoke-RestCommand;
  # See the License for the specific language governing permissions and
  # limitations under the License.
  #
- #/
+ #>

@@ -35,7 +35,7 @@ if( Test-Path -Path $ManifestPathAndFile)
 	}
 }
 
-/##
+<##
  #
  #
  # Copyright 2014, 2015 Ronald Rink, d-fens GmbH
@@ -52,4 +52,4 @@ if( Test-Path -Path $ManifestPathAndFile)
  # See the License for the specific language governing permissions and
  # limitations under the License.
  #
- #/
+ #>

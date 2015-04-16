@@ -12,7 +12,7 @@
 RootModule = 'biz.dfch.PS.Ipam.Infoblox.Api.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.0.1.20141206'
+ModuleVersion = '1.0.2.20150416'
 
 # ID used to uniquely identify this module
 GUID = '26be8c51-7b9a-48b1-a602-7462d498eb03'
@@ -27,7 +27,7 @@ CompanyName = 'd-fens GmbH'
 Copyright = '(c) 2014 d-fens GmbH. Distributed under Apache 2.0 license.'
 
 # Description of the functionality provided by this module
-Description = 'A helper module for the Infoblox WAPI (REST API)'
+Description = 'Helper module for the Infoblox WAPI (REST API)'
 
 # Minimum version of the Windows PowerShell engine required by this module
 PowerShellVersion = '3.0'
@@ -61,9 +61,6 @@ RequiredAssemblies = @(
 	'System.Web'
 	,
 	'System.Web.Extensions'
-	,
-	,
-	'System.Json.dll'
 	,
 	'InfobloxWapi.dll'
 )
@@ -111,11 +108,7 @@ FileList = @(
 	,
 	'README.md'
 	,
-	'InfobloxWapi.dll'
-	,
 	'Import-Module.ps1'
-	,
-	'System.Json.xml'
 )
 
 # Private data to pass to the module specified in RootModule/ModuleToProcess
@@ -132,7 +125,7 @@ DefaultCommandPrefix = 'Infoblox'
 
 }
 
-/##
+<##
  #
  #
  # Copyright 2014, 2015 Ronald Rink, d-fens GmbH
@@ -149,4 +142,4 @@ DefaultCommandPrefix = 'Infoblox'
  # See the License for the specific language governing permissions and
  # limitations under the License.
  #
- #/
+ #>
