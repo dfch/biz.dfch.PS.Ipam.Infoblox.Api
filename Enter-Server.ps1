@@ -192,7 +192,7 @@ Set-Alias -Name Connect- -Value 'Enter-Server';
 Set-Alias -Name Enter- -Value 'Enter-Server';
 if($MyInvocation.ScriptName) { Export-ModuleMember -Function Enter-Server -Alias Connect-, Enter-; } 
 
-/##
+<##
  #
  #
  # Copyright 2014, 2015 Ronald Rink, d-fens GmbH
@@ -209,4 +209,4 @@ if($MyInvocation.ScriptName) { Export-ModuleMember -Function Enter-Server -Alias
  # See the License for the specific language governing permissions and
  # limitations under the License.
  #
- #/
+ #>

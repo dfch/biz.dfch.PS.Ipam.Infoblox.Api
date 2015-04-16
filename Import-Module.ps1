@@ -9,7 +9,7 @@
 # show up as loaded module, see the bug on Microsoft Connect below: 
 # https://connect.microsoft.com/PowerShell/feedback/details/903654/scripts-loaded-via-a-scriptstoprocess-attribute-in-a-module-manifest-appear-as-if-they-are-loaded-modules
 
-/##
+<##
  #
  #
  # Copyright 2014, 2015 Ronald Rink, d-fens GmbH
@@ -26,4 +26,4 @@
  # See the License for the specific language governing permissions and
  # limitations under the License.
  #
- #/
+ #>
