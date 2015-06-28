@@ -7,11 +7,14 @@ Performs a login to an Infoblox server.
 .DESCRIPTION
 Performs a login to an Infoblox server. 
 
-This is the first Cmdlet to be executed and required for all other Cmdlets of this module. It creates service references in the module variable.
+This is the first Cmdlet to be executed and required for all other Cmdlets 
+of this module. It creates service references in the module variable.
 
 
 .OUTPUTS
-This Cmdlet returns a reference to a InfobloxWapi.RestHelper object, the REST wrapper to the Infoblox REST API. On failure it returns $null.
+This Cmdlet returns a reference to a biz.dfch.CS.Infoblox.Wapi.RestHelper 
+object, the REST wrapper to the Infoblox REST API. On failure it returns 
+$null.
 
 
 .INPUTS
@@ -30,7 +33,8 @@ Version     : v1.2.1
 Credential  : System.Net.NetworkCredential
 TimeoutSec  : 90
 
-Perform a login to an Infoblox server with credentials in a PSCredential object and against a server defined within module configuration xml file.
+Perform a login to an Infoblox server with credentials in a PSCredential 
+object and against a server defined within module configuration xml file.
 
 
 .LINK
@@ -44,21 +48,21 @@ http://dfch.biz/biz/dfch/PS/Ipam/Infoblox/Api/biz.dfch.PS.Ipam.Infoblox.Api.psd1
 
 #>
 [CmdletBinding(
-	HelpURI='http://dfch.biz/biz/dfch/PS/Ipam/Infoblox/Api/Enter-Server/'
+	HelpURI = 'http://dfch.biz/biz/dfch/PS/Ipam/Infoblox/Api/Enter-Server/'
 )]
-[OutputType([InfobloxWapi.RestHelper])]
+[OutputType([biz.dfch.CS.Infoblox.Wapi.RestHelper])]
 
 Param 
 (
-	# [Optional] The ServerBaseUri such as 'https://infoblox/'. If you do not 
+	# [Optional] The UriServer such as 'https://infoblox/'. If you do not 
 	# specify this value it is taken from the module configuration file.
 	[Parameter(Mandatory = $false, Position = 0)]
-	[Uri] $ServerBaseUri = (Get-Variable -Name $MyInvocation.MyCommand.Module.PrivateData.MODULEVAR -ValueOnly).ServerBaseUri
+	[Uri] $UriServer = (Get-Variable -Name $MyInvocation.MyCommand.Module.PrivateData.MODULEVAR -ValueOnly).UriServer
 	, 
-	# [Optional] The BaseUrl such as '/wapi/'. If you do not specify this value 
+	# [Optional] The UriBase such as '/wapi/'. If you do not specify this value 
 	# it is taken from the module configuration file.
 	[Parameter(Mandatory = $false, Position = 1)]
-	[string] $BaseUrl = (Get-Variable -Name $MyInvocation.MyCommand.Module.PrivateData.MODULEVAR -ValueOnly).BaseUrl
+	[string] $UriBase = (Get-Variable -Name $MyInvocation.MyCommand.Module.PrivateData.MODULEVAR -ValueOnly).UriBase
 	, 
 	# [Optional] The Version such as 'v1.2.1'. If you do not specify this value 
 	# it is taken from the module configuration file.
@@ -66,6 +70,7 @@ Param
 	[string] $Version = (Get-Variable -Name $MyInvocation.MyCommand.Module.PrivateData.MODULEVAR -ValueOnly).Version
 	, 
 	# Specifies credentials for authentication of the request
+	[ValidateNotNull()]
 	[Parameter(Mandatory = $false, ParameterSetName = 'c')]
 	[alias("cred")]
 	[PSCredential] $Credential = (Get-Variable -Name $MyInvocation.MyCommand.Module.PrivateData.MODULEVAR -ValueOnly).Credential
@@ -87,7 +92,7 @@ BEGIN
 {
 	$datBegin = [datetime]::Now;
 	[string] $fn = $MyInvocation.MyCommand.Name;
-	Log-Debug $fn ("CALL. ServerBaseUri '{0}'; BaseUrl '{1}'. Username '{2}'" -f $ServerBaseUri, $BaseUrl, $Credential.Username ) -fac 1;
+	Log-Debug $fn ("CALL. UriServer '{0}'; UriBase '{1}'. Username '{2}'" -f $UriServer, $UriBase, $Credential.Username ) -fac 1;
 }
 # BEGIN 
 
@@ -100,7 +105,7 @@ try
 {
 	# Parameter validation
 	# N/A
-	
+
 	if('c' -eq $PsCmdlet.ParameterSetName) 
 	{
 		if( (!$Credential) -Or ($Credential -isnot [PSCredential]) -Or ([string]::IsNullOrWhiteSpace($Credential.Username)) -Or ([string]::IsNullOrEmpty($Credential.Username)) ) 
@@ -113,20 +118,22 @@ try
 		$Username = $Credential.Username;
 		$Password = $Credential.GetNetworkCredential().Password;
 	}
-	
-	$Ipam = New-Object InfobloxWapi.RestHelper
-		(
-			$ServerBaseUri, 
-			(Get-Variable -Name $MyInvocation.MyCommand.Module.PrivateData.MODULEVAR -ValueOnly).Version, 
-			(Get-Variable -Name $MyInvocation.MyCommand.Module.PrivateData.MODULEVAR -ValueOnly).TimeoutSec, 
-			$BaseUrl, 
-			(Get-Variable -Name $MyInvocation.MyCommand.Module.PrivateData.MODULEVAR -ValueOnly).ReturnType, 
-			(Get-Variable -Name $MyInvocation.MyCommand.Module.PrivateData.MODULEVAR -ValueOnly).ContentType
+
+	$Script:MODULEVAR = (Get-Variable -Name $MyInvocation.MyCommand.Module.PrivateData.MODULEVAR -ValueOnly);
+	$Ipam = New-Object biz.dfch.CS.Infoblox.Wapi.RestHelper -ArgumentList @(
+			$UriServer, 
+			$Script:MODULEVAR.Version, 
+			$Script:MODULEVAR.TimeoutSec, 
+			$UriBase, 
+			$Script:MODULEVAR.ReturnType, 
+			$Script:MODULEVAR.ContentType
 		);
 	$Ipam.SetCredential($Username, $Password);
-	(Get-Variable -Name $MyInvocation.MyCommand.Module.PrivateData.MODULEVAR -ValueOnly).IPAM = $Ipam;
+	# (Get-Variable -Name $MyInvocation.MyCommand.Module.PrivateData.MODULEVAR -ValueOnly).IPAM = $Ipam;
+	$Script:MODULEVAR.IPAM = $Ipam;
 
-	$OutputParameter = (Get-Variable -Name $MyInvocation.MyCommand.Module.PrivateData.MODULEVAR -ValueOnly).IPAM;
+	# $OutputParameter = (Get-Variable -Name $MyInvocation.MyCommand.Module.PrivateData.MODULEVAR -ValueOnly).IPAM;
+	$OutputParameter = $Ipam;
 	$fReturn = $true;
 
 } 
