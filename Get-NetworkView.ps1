@@ -1,20 +1,20 @@
-function Enter-Server {
+function Get-InfobloxNetworkView {
 <#
 .SYNOPSIS
-Performs a login to an Infoblox server.
+
+Gets the network view from an Infoblox REST endpoint.
 
 
 .DESCRIPTION
-Performs a login to an Infoblox server. 
 
-This is the first Cmdlet to be executed and required for all other Cmdlets 
-of this module. It creates service references in the module variable.
+Gets the network view from an Infoblox REST endpoint.
 
 
 .OUTPUTS
-This Cmdlet returns a reference to a biz.dfch.CS.Infoblox.Wapi.RestHelper 
-object, the REST wrapper to the Infoblox REST API. On failure it returns 
-$null.
+
+Here we describe the output of the Cmdlet. This Cmdlet returns a [String] parameter. On failure the string contains $null.
+
+For more information about output parameters see 'help about_Functions_OutputTypeAttribute'.
 
 
 .INPUTS
@@ -22,23 +22,19 @@ See PARAMETER section for a description of input parameters.
 
 
 .EXAMPLE
-$ipam = Enter-Infoblox -Credential $Credential;
-$ipam
+Get-NetworkView
 
-ReturnType  : JsonPretty
-ContentType : application/json
-UriServer   : https://infoblox/
-UriBase     : wapi
-Version     : v1.2.1
-Credential  : System.Net.NetworkCredential
-TimeoutSec  : 90
+Gets the network view from the Infoblox endpoint.
 
-Perform a login to an Infoblox server with credentials in a PSCredential 
-object and against a server defined within module configuration xml file.
+
+.EXAMPLE
+Get-NetworkView -Default
+
+Gets the 'default' network view from the Infoblox endpoint.
 
 
 .LINK
-Online Version: http://dfch.biz/biz/dfch/PS/Ipam/Infoblox/Api/Enter-Server/
+Online Version: http://dfch.biz/biz/dfch/PS/Ipam/Infoblox/Api/Get-NetworkView/
 
 
 .NOTES
@@ -48,95 +44,50 @@ http://dfch.biz/biz/dfch/PS/Ipam/Infoblox/Api/biz.dfch.PS.Ipam.Infoblox.Api.psd1
 
 #>
 [CmdletBinding(
-	HelpURI = 'http://dfch.biz/biz/dfch/PS/Ipam/Infoblox/Api/Enter-Server/'
+    SupportsShouldProcess = $true
+	,
+    ConfirmImpact = 'Low'
+	,
+	HelpURI = 'http://dfch.biz/PS/Ipam/Infoblox/Api/Get-NetworkView/'
 )]
-[OutputType([biz.dfch.CS.Infoblox.Wapi.RestHelper])]
-
 Param 
 (
-	# [Optional] The UriServer such as 'https://infoblox/'. If you do not 
-	# specify this value it is taken from the module configuration file.
+	# Specifies whether to retrieve the 'default' network view
 	[Parameter(Mandatory = $false, Position = 0)]
-	[Uri] $UriServer = (Get-Variable -Name $MyInvocation.MyCommand.Module.PrivateData.MODULEVAR -ValueOnly).UriServer
-	, 
-	# [Optional] The UriBase such as '/wapi/'. If you do not specify this value 
-	# it is taken from the module configuration file.
-	[Parameter(Mandatory = $false, Position = 1)]
-	[string] $UriBase = (Get-Variable -Name $MyInvocation.MyCommand.Module.PrivateData.MODULEVAR -ValueOnly).UriBase
-	, 
-	# [Optional] The Version such as 'v1.2.1'. If you do not specify this value 
-	# it is taken from the module configuration file.
-	[Parameter(Mandatory = $false, Position = 2)]
-	[string] $Version = (Get-Variable -Name $MyInvocation.MyCommand.Module.PrivateData.MODULEVAR -ValueOnly).Version
-	, 
-	# Specifies credentials for authentication of the request
-	[ValidateNotNull()]
-	[Parameter(Mandatory = $false, ParameterSetName = 'c')]
-	[alias("cred")]
-	[PSCredential] $Credential = (Get-Variable -Name $MyInvocation.MyCommand.Module.PrivateData.MODULEVAR -ValueOnly).Credential
-	,
-	# Specifies the username for authentication of the request
-	[Parameter(Mandatory = $true, ParameterSetName = 'u')]
-	[alias("u")]
-	[alias("user")]
-	[string] $Username
-	,
-	# Specifies the password for authentication of the request
-	[Parameter(Mandatory = $true, ParameterSetName = 'u')]
-	[alias("p")]
-	[alias("pass")]
-	[string] $Password
+	[switch] $Default = $false
 )
-
 BEGIN 
 {
 	$datBegin = [datetime]::Now;
 	[string] $fn = $MyInvocation.MyCommand.Name;
-	Log-Debug $fn ("CALL. UriServer '{0}'; UriBase '{1}'. Username '{2}'" -f $UriServer, $UriBase, $Credential.Username ) -fac 1;
+	Log-Debug -fn $fn -msg ("CALL. Param1 '{0}'. Param2 '{1}'. Param3 '{2}'. ParameterSetName: '{3}'." -f $aram1, $Param2, $Param3, $PsCmdlet.ParameterSetName) -fac 1;
 }
-# BEGIN 
 
 PROCESS 
 {
 
-[boolean] $fReturn = $false;
+# Default test variable for checking function response codes.
+[Boolean] $fReturn = $false;
+# Return values are always and only returned via OutputParameter.
+$OutputParameter = $null;
 
 try 
 {
+
 	# Parameter validation
 	# N/A
-
-	if('c' -eq $PsCmdlet.ParameterSetName) 
+	# Here you should check your variable input.
+	
+	$ht = @{};
+	if($Default) 
 	{
-		if( (!$Credential) -Or ($Credential -isnot [PSCredential]) -Or ([string]::IsNullOrWhiteSpace($Credential.Username)) -Or ([string]::IsNullOrEmpty($Credential.Username)) ) 
-		{
-			$msg = "Credential: Parameter check FAILED.";
-			Log-Error $fn $msg;
-			$e = New-CustomErrorRecord -m $msg -cat InvalidArgument -o $Credential;
-			throw($gotoError);
-		}
-		$Username = $Credential.Username;
-		$Password = $Credential.GetNetworkCredential().Password;
+		$ht.Add('name', 'default');
 	}
-
-	$Script:MODULEVAR = (Get-Variable -Name $MyInvocation.MyCommand.Module.PrivateData.MODULEVAR -ValueOnly);
-	$Ipam = New-Object biz.dfch.CS.Infoblox.Wapi.RestHelper -ArgumentList @(
-			$UriServer, 
-			$Script:MODULEVAR.Version, 
-			$Script:MODULEVAR.TimeoutSec, 
-			$UriBase, 
-			$Script:MODULEVAR.ReturnType, 
-			$Script:MODULEVAR.ContentType
-		);
-	$Ipam.SetCredential($Username, $Password);
-	# (Get-Variable -Name $MyInvocation.MyCommand.Module.PrivateData.MODULEVAR -ValueOnly).IPAM = $Ipam;
-	$Script:MODULEVAR.IPAM = $Ipam;
-
-	# $OutputParameter = (Get-Variable -Name $MyInvocation.MyCommand.Module.PrivateData.MODULEVAR -ValueOnly).IPAM;
-	$OutputParameter = $Ipam;
+	$r = Invoke-InfobloxRestCommand 'networkview' -QueryParameters $ht;
 	$fReturn = $true;
-
-} 
+	$OutputParameter = $r;
+	
+}
 catch 
 {
 	if($gotoSuccess -eq $_.Exception.Message) 
@@ -152,9 +103,9 @@ catch
 		
 		if($_.Exception -is [System.Net.WebException]) 
 		{
-			Log-Critical $fn "Login to Uri '$Uri' with Username '$Username' FAILED [$_].";
+			Log-Critical $fn ("[WebException] Request FAILED with Status '{0}'. [{1}]." -f $_.Status, $_);
 			Log-Debug $fn $ErrorText -fac 3;
-		} 
+		}
 		else 
 		{
 			Log-Error $fn $ErrorText -fac 3;
@@ -171,7 +122,7 @@ catch
 			{
 				# N/A
 			}
-		} 
+		}
 		$fReturn = $false;
 		$OutputParameter = $null;
 	}
@@ -179,8 +130,9 @@ catch
 finally 
 {
 	# Clean up
-	# N/A
 }
+
+# Return values are always and only returned via OutputParameter.
 return $OutputParameter;
 
 }
@@ -188,41 +140,40 @@ return $OutputParameter;
 
 END 
 {
-	$datEnd = [datetime]::Now;
-	Log-Debug -fn $fn -msg ("RET. fReturn: [{0}]. Execution time: [{1}]ms. Started: [{2}]." -f $fReturn, ($datEnd - $datBegin).TotalMilliseconds, $datBegin.ToString('yyyy-MM-dd HH:mm:ss.fffzzz')) -fac 2;
+
+$datEnd = [datetime]::Now;
+Log-Debug -fn $fn -msg ("RET. fReturn: [{0}]. Execution time: [{1}]ms. Started: [{2}]." -f $fReturn, ($datEnd - $datBegin).TotalMilliseconds, $datBegin.ToString('yyyy-MM-dd HH:mm:ss.fffzzz')) -fac 2;
+
 }
 # END
 
 } # function
 
-Set-Alias -Name Connect- -Value 'Enter-Server';
-Set-Alias -Name Enter- -Value 'Enter-Server';
-if($MyInvocation.ScriptName) { Export-ModuleMember -Function Enter-Server -Alias Connect-, Enter-; } 
+if($MyInvocation.ScriptName) { Export-ModuleMember -Function Get-NetworkView; } 
 
-<##
- #
- #
- # Copyright 2013, 2015 Ronald Rink, d-fens GmbH
- #
- # Licensed under the Apache License, Version 2.0 (the "License");
- # you may not use this file except in compliance with the License.
- # You may obtain a copy of the License at
- #
- # http://www.apache.org/licenses/LICENSE-2.0
- #
- # Unless required by applicable law or agreed to in writing, software
- # distributed under the License is distributed on an "AS IS" BASIS,
- # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- # See the License for the specific language governing permissions and
- # limitations under the License.
- #
- #>
+#
+#
+# Copyright 2014, 2015 Ronald Rink, d-fens GmbH
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+#
 
 # SIG # Begin signature block
 # MIIXDwYJKoZIhvcNAQcCoIIXADCCFvwCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUZiqc7SKWsCosIwAV3NULNsrq
-# 202gghHCMIIEFDCCAvygAwIBAgILBAAAAAABL07hUtcwDQYJKoZIhvcNAQEFBQAw
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUYDLbtx3r60Eh6wpSvfr4WmCt
+# jnygghHCMIIEFDCCAvygAwIBAgILBAAAAAABL07hUtcwDQYJKoZIhvcNAQEFBQAw
 # VzELMAkGA1UEBhMCQkUxGTAXBgNVBAoTEEdsb2JhbFNpZ24gbnYtc2ExEDAOBgNV
 # BAsTB1Jvb3QgQ0ExGzAZBgNVBAMTEkdsb2JhbFNpZ24gUm9vdCBDQTAeFw0xMTA0
 # MTMxMDAwMDBaFw0yODAxMjgxMjAwMDBaMFIxCzAJBgNVBAYTAkJFMRkwFwYDVQQK
@@ -321,26 +272,26 @@ if($MyInvocation.ScriptName) { Export-ModuleMember -Function Enter-Server -Alias
 # MDAuBgNVBAMTJ0dsb2JhbFNpZ24gQ29kZVNpZ25pbmcgQ0EgLSBTSEEyNTYgLSBH
 # MgISESENFrJbjBGW0/5XyYYR5rrZMAkGBSsOAwIaBQCgeDAYBgorBgEEAYI3AgEM
 # MQowCKACgAChAoAAMBkGCSqGSIb3DQEJAzEMBgorBgEEAYI3AgEEMBwGCisGAQQB
-# gjcCAQsxDjAMBgorBgEEAYI3AgEVMCMGCSqGSIb3DQEJBDEWBBSvlXOj8SFA3DeZ
-# Ioqn5hBTM60zETANBgkqhkiG9w0BAQEFAASCAQBu5IRl/HGdNsBA/TQFfrrhzS3j
-# OcKYng0JDJNJlOrkAGHWUVyRsRDLBi5MpjOGUaPLaluM4/Wx2IZAD9K2DyZI7Y3C
-# PK4M+cazlETP6hyLostXkxXXuxbz8s95ul4yTONQqcsWVK5AgzkY353uy4dnu+XQ
-# XmkwqCUKTzsrnMBQ0VU0Fab8xB3x5x28TLgFxYw6wmugpUlXb5Wp3GoZ6f1FCFZK
-# X8vCb2sxVidKJkl6ZdSbf04HM+2x5X0fRJGyTnFYYccWPdkXKkKuGqx+TGdqfxLJ
-# 5rMDwBQ2gDvOr3P14HX1Q2iC6l9VOlh8aWAclwoljawxduhf70jkVIBLFNEWoYIC
+# gjcCAQsxDjAMBgorBgEEAYI3AgEVMCMGCSqGSIb3DQEJBDEWBBTOHSdu+hEZmgLd
+# jYYJ0wvhMmhqMDANBgkqhkiG9w0BAQEFAASCAQAat5nkKy78icqZXrluwamzBs9x
+# hlegtRX3oyMMfugV4gCBXlMc7BXnM4lJHwCFSiHu7CnaGXu8OLEvjzBE+WE1ln+z
+# B3rKnwOl640EHAFGdytQGhSkBb6UQSwD8Q9NYHjRPWZ3B0Dm7qSNAVkzBTY6/7Fj
+# eiGRYhksbq8s1TQ9/5L3WBvSzpk+1/asnkggZcOTEvR+RWXZgAhws1LGggn9J145
+# S0o1fBXg/zzgqR6XT8DqAU4kah+6HR0hxRY8Vlj8EuDg1tW+/EqBRtQFutR7Z3h9
+# c3Im32mLLjOgHgXpX5t7YToIXmR1Szk+4h4PJQCWluo7eeQYXGQiYwpqyXA0oYIC
 # ojCCAp4GCSqGSIb3DQEJBjGCAo8wggKLAgEBMGgwUjELMAkGA1UEBhMCQkUxGTAX
 # BgNVBAoTEEdsb2JhbFNpZ24gbnYtc2ExKDAmBgNVBAMTH0dsb2JhbFNpZ24gVGlt
 # ZXN0YW1waW5nIENBIC0gRzICEhEhBqCB0z/YeuWCTMFrUglOAzAJBgUrDgMCGgUA
 # oIH9MBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTE1
-# MDYyODE2MzY1M1owIwYJKoZIhvcNAQkEMRYEFJb7CTfuXTNP8Le0pWSGrRsvmVcR
+# MDYyODA3NDQzNVowIwYJKoZIhvcNAQkEMRYEFDi0ZRirG1iWyctY4d/cm5ptwoS1
 # MIGdBgsqhkiG9w0BCRACDDGBjTCBijCBhzCBhAQUs2MItNTN7U/PvWa5Vfrjv7Es
 # KeYwbDBWpFQwUjELMAkGA1UEBhMCQkUxGTAXBgNVBAoTEEdsb2JhbFNpZ24gbnYt
 # c2ExKDAmBgNVBAMTH0dsb2JhbFNpZ24gVGltZXN0YW1waW5nIENBIC0gRzICEhEh
-# BqCB0z/YeuWCTMFrUglOAzANBgkqhkiG9w0BAQEFAASCAQA+q5n5+ay0K19/bu/6
-# iBk/MEXdE40qJDBNVRP02t4fvtOYjo2D68YwrpCM9Ni4bHaXFSKtFzwXAl+czl5a
-# /nMiwQk2uwiDJQ6rJN25LxbWKhblzLSGN8R39+/cu0oyPDDxb3YiOEbyYx1SAQBn
-# T3xESYV6mnchVIlXG8zDHLdryXzisgM/YRF6uOU17kEwXjhpuf6SbkwCzeaKshwZ
-# oqttoFv0cB5tkkbICWb8lLuA2MA9pZftbjQwQiU2yKvsFWWZAYdhcTAthqj85ivO
-# ArHuvhrJk3E4E8SqgUasuxjgQdB0NAkVXFS7VLTiqQPdiRFlfe/OPNZC5vgkBtBD
-# 9m4a
+# BqCB0z/YeuWCTMFrUglOAzANBgkqhkiG9w0BAQEFAASCAQASS/0Wc6VLD5hcQFl2
+# bI4Eq0vpGxzPqcy8Ic+LNjD3CxYm3xiY+Y5nMfSffEsY7vdS/exk+a7qITXgi3X9
+# duC6wJ6MJbZDhC9v4HTq8s3t7b4gRIuP7/VSNnjPTztskrswS+dlSqNAu9CoOPVj
+# wPTKCCq6ZfseiJB1c3yPT09seEa/9hSbLKsEOUMHqDlp3UlmKvDcAHYm3X6BvKCO
+# Fbt8x0F/oBaFWRctcCY/hzshgXcDUSRFBP3VeU9YYwmohiDEybqWAOpBl+Y4WWGZ
+# Uw5nvo6RBsj6YZGcmiT7hxxW6vJm4gahWvymNhIBe+qIH1WEF3A3cqAhl4EYXbMK
+# +yum
 # SIG # End signature block
