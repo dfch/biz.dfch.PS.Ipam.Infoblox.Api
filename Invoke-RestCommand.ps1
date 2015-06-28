@@ -19,13 +19,13 @@ default | json | json-pretty | xml | xml-pretty
 
 
 .EXAMPLE
-Invoke-RestCommand networks -Username Edgar.Schnittenfittich -Password 'P@ssL0rd'
+Invoke-RestCommand network -Username Edgar.Schnittenfittich -Password 'P@ssw0rd'
 
 Get a list of all networks defined in Infoblox. UriServer and UriBase are taken from the configuration file.
 
 
 .EXAMPLE
-Invoke-RestCommand networks -Credential $Credential
+Invoke-RestCommand network -Credential $Credential
 
 Get a list of all networks defined in Infoblox. UriServer and UriBase are taken from the configuration file.
 
@@ -84,13 +84,18 @@ Param
 	,
 	# Specifies the server name to invoke.
 	[Parameter(Mandatory = $false)]
-	[AllowEmptyString()]
+	[ValidateNotNull()]
 	[string] $UriServer = (Get-Variable -Name $MyInvocation.MyCommand.Module.PrivateData.MODULEVAR -ValueOnly).UriServer
 	,
 	# Specifes the base url to invoke
 	[Parameter(Mandatory = $false)]
-	[AllowEmptyString()]
+	[ValidateNotNull()]
 	[string] $UriBase = (Get-Variable -Name $MyInvocation.MyCommand.Module.PrivateData.MODULEVAR -ValueOnly).UriBase
+	,
+	# Specifes the Infoblox WAPI version (e.g. v1.2.1) to use
+	[Parameter(Mandatory = $false)]
+	[ValidateNotNull()]
+	[string] $Version = (Get-Variable -Name $MyInvocation.MyCommand.Module.PrivateData.MODULEVAR -ValueOnly).Version
 	,
 	# Specifies the return format of the Cmdlet
 	[ValidateSet("xml", "xml-pretty", "json", "json-pretty")]
@@ -117,16 +122,20 @@ Param
 	[PSCredential] $Credential = (Get-Variable -Name $MyInvocation.MyCommand.Module.PrivateData.MODULEVAR -ValueOnly).Credential
 	,
 	# Specifies the username for authentication of the request
-	[Parameter(Mandatory = $true, ParameterSetName = 'u')]
+	[Parameter(Mandatory = $false, ParameterSetName = 'u')]
 	[alias("u")]
 	[alias("user")]
 	[string] $Username
 	,
 	# Specifies the password for authentication of the request
-	[Parameter(Mandatory = $true, ParameterSetName = 'u')]
+	[Parameter(Mandatory = $false, ParameterSetName = 'u')]
 	[alias("p")]
 	[alias("pass")]
 	[string] $Password
+	,
+	[Parameter(Mandatory = $false)]
+	[ValidateNotNull()]
+	[biz.dfch.CS.Infoblox.Wapi.RestHelper] $IPAM = (Get-Variable -Name $MyInvocation.MyCommand.Module.PrivateData.MODULEVAR -ValueOnly).IPAM
 )
 
 BEGIN 
@@ -151,87 +160,100 @@ try
 {
 
 	# Parameter validation
+	if('u' -eq $PsCmdlet.ParameterSetName) 
+	{
+		$PasswordSecure = ConvertTo-SecureString $Password -AsPlainText -Force;
+		$Credential = New-Object System.Management.Automation.PSCredential ($Username, $PasswordSecure);
+		$IPAM.SetCredential($Credential.UserName, $Credential.GetNetworkCredential().Password);
+	}
 	if('c' -eq $PsCmdlet.ParameterSetName) 
 	{
-		if( (!$Credential) -Or ($Credential -isnot [PSCredential]) -Or ([string]::IsNullOrWhiteSpace($Credential.Username)) -Or ([string]::IsNullOrEmpty($Credential.Username)) ) 
+		if($Credential)
 		{
-			$msg = "Credential: Parameter check FAILED.";
+			$IPAM.SetCredential($Credential.UserName, $cred.GetNetworkCredential().Password);
+		}
+		if( 
+			(!$IPAM.Credential) -Or 
+			$IPAM.Credential -isnot [System.Net.NetworkCredential] -Or 
+			([string]::IsNullOrWhiteSpace($IPAM.Credential.UserName))
+			) 
+		{
+			$msg = "Credential: Parameter validation FAILED. You either have supplied invalid Credential or not supplied credentials upon module initialisation.";
 			Log-Error $fn $msg;
 			$e = New-CustomErrorRecord -m $msg -cat InvalidArgument -o $Credential;
 			throw($gotoError);
 		}
-		$Username = $Credential.Username;
-		$Password = $Credential.GetNetworkCredential().Password;
 	}
 	
-	if($QueryParameters.Contains('_return_type')) 
+	if($PSBoundParameters.ContainsKey('ReturnType'))
 	{
-		Log-Warning $fn "QueryParameters already contains '_return_type' header. Skipping creation of custom '_return_type' header ...";
-	} 
-	else 
+		$IPAM.ReturnTypeString = $ReturnType;
+	}
+	if($PSBoundParameters.ContainsKey('Version'))
 	{
-		$QueryParameters.Add('_return_type', $ReturnType);
+		$IPAM.Version = $Version;
+	}
+	if($PSBoundParameters.ContainsKey('ContentType'))
+	{
+		$IPAM.ContentType = $ContentType;
+	}
+	if($PSBoundParameters.ContainsKey('TimeoutSec'))
+	{
+		$IPAM.TimeoutSec = $TimeoutSec;
+	}
+	if($PSBoundParameters.ContainsKey('Version'))
+	{
+		$IPAM.Version = $Version;
 	}
 	
 	if($Headers.Contains('Authorization')) 
 	{
 		Log-Warning $fn "Headers already contains 'Authorization' header. Skipping creation of custom 'Authorization' header ...";
 	} 
-	else 
-	{
-		$BasicUserPass = "{0}:{1}" -f $Username, $Password;
-		$Headers.Add('Authorization', "Basic {0}" -f ($BasicUserPass | ConvertTo-Base64));
-	}
 
-	if($Uri.IsAbsoluteUri) 
-	{
-		[Uri] $UriRestCommand = $Uri;
-	} 
-	else 
-	{
-		if(!$Uri.ToString().StartsWith('/') ) 
-		{
-			$Uri = "/{0}" -f $Uri;
-		}
-		[Uri] $UriRestCommand = $UriServer;
-		[Uri] $UriRestCommand = "{0}{1}{2}" -f $UriRestCommand.AbsoluteUri, $UriBase, $Uri;
-	}
-	if([uri]::UriSchemeHttp,[uri]::UriSchemeHttps -notcontains $UriRestCommand.Scheme)
-	{
-		$msg = "UriRestCommand: Parameter check FAILED. Invalid Uri Scheme '{0}'" -f $UriRestCommand;
-		Log-Error $fn $msg;
-		$e = New-CustomErrorRecord -m $msg -cat InvalidData -o $UriRestCommand;
-		throw($gotoError);
-	}
-	if($UriRestCommand.Query) 
-	{
-		Log-Warn $fn ("QueryString already exists in UriRestCommand: '{0}'" -f $UriRestCommand.AbsoluteUri);
-	} 
-	else 
-	{
-		# Build QueryString
-		$QueryString = '';
-		foreach($q in $QueryParameters.GetEnumerator()) 
-		{
-			$QueryString += ("&{0}={1}" -f $q.Name, $q.Value);
-		}
-		$QueryString = "{0}" -f $QueryString.Substring(1);
-		Log-Debug $fn ("QueryString: '{0}'" -f $QueryString);
-		[Uri] $UriRestCommand = "{0}?{1}" -f $UriRestCommand.AbsoluteUri, $QueryString;
-	}
-	Log-Debug $fn ("Invoking '{0}' '{1}' as user '{2}' ..." -f $Method, $UriRestCommand.AbsoluteUri, $Username);
+	Log-Debug $fn ("Invoking '{0}' '{1}' as user '{2}' ..." -f $Method, $Uri, $IPAM.Credential.UserName);
 	if( ('GET' -eq $Method) -Or ('HEAD' -eq $Method) ) 
 	{
-		$r = Invoke-RestMethod -Method $Method -Uri $UriRestCommand -Headers $Headers -ContentType $ContentType -TimeoutSec $TimeoutSec;
+		$r = $IPAM.Invoke($Method, $Uri, $QueryParameters, $Headers, $null);
 	} 
 	else 
 	{
-		$r = Invoke-RestMethod -Method $Method -Uri $UriRestCommand -Headers $Headers -ContentType $ContentType -TimeoutSec $TimeoutSec -Body $Body;
+		$r = $IPAM.Invoke($Method, $UriRestCommand, $QueryParameters, $Headers, $Body);
 	}
-	Log-Debug $fn ("Invoking '{0}' '{1}' as user '{2}' COMPLETED." -f $Method, $UriRestCommand.AbsoluteUri, $Username);
+	Log-Info $fn ("Invoking '{0}' '{1}' as user '{2}' COMPLETED." -f $Method, $UriRestCommand.AbsoluteUri, $Username);
 	$fReturn = $true;
 	$OutputParameter = $r;
 	
+}
+catch [System.Management.Automation.MethodInvocationException]
+{
+	$ErrorText = $_.InvocationInfo.PositionMessage;
+	$ErrorText += "`n";
+	$ErrorText += $_.ScriptStackTrace;
+	$ErrorText += "`n";
+	$ErrorText += ($_.Exception | Out-String);
+	if(
+		$_.Exception.InnerException -And 
+		$_.Exception.InnerException -is [System.AggregateException] -And
+		$_.Exception.InnerException.InnerException -And
+		$_.Exception.InnerException.InnerException -is [System.Threading.Tasks.TaskCanceledException]
+		)
+	{
+		$msg = 'The operation timed out.';
+		$e = New-CustomErrorRecord -m $msg -cat OperationTimeout -o $_;
+		Log-Critical $fn ("{0}`n`n{1}" -f $msg, $ErrorText);
+		$PSCmdlet.ThrowTerminatingError($e);
+	}
+	elseif(
+		$_.Exception.InnerException -And
+		$_.Exception.InnerException -is [System.ArgumentException]
+		)
+	{
+		$msg = $_.Exception.InnerException.Message;
+		$e = New-CustomErrorRecord -m $msg -cat InvalidArgument -o $_;
+		Log-Critical $fn ("{0}`n{1}" -f $msg, $ErrorText);
+		$PSCmdlet.ThrowTerminatingError($e);
+	}
 }
 catch 
 {
